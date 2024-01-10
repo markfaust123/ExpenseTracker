@@ -16,7 +16,8 @@ const ExpensesOutput = ({expenses, expensesPeriod}: {expenses: Expense[], expens
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 24,
+        paddingHorizontal: 24,
+        paddingTop: 24,
         backgroundColor: GlobalStyles.colors.primary700,
     }
 })
