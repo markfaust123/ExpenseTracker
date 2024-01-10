@@ -5,10 +5,12 @@ import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 const ExpenseItem = ({
+  id,
   description,
   amount,
   date
 }: {
+  id: string;
   description: string;
   amount: number;
   date: Date;
@@ -18,7 +20,9 @@ const ExpenseItem = ({
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
     const handleExpensePress = () => {
-        navigation.navigate("ManageExpenses");
+        navigation.navigate("ManageExpenses", {
+          expenseId: id,
+        });
     }
 
   return (
