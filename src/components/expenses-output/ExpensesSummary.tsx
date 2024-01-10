@@ -15,7 +15,7 @@ const ExpensesSummary = ({
   return (
     <View>
       <Text>Expense period: {periodName}</Text>
-      <Text>Sum of expenses: {sumOfExpenses}</Text>
+      <Text>Sum of expenses: ${sumOfExpenses.toFixed(2)}</Text>
     </View>
   );
 };

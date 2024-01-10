@@ -5,8 +5,7 @@ import { EXPENSES } from "../lib/data";
 const RecentExpenses = () => {
     return (
       <>
-        <Text>RecentExpenses Screen</Text>
-        <ExpensesOutput expenses={EXPENSES} expensesPeriod="7 days" />
+        <ExpensesOutput expenses={EXPENSES} expensesPeriod="7 Days" />
       </>
     );
 }

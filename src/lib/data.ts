@@ -2,43 +2,33 @@ import { Expense } from "./types";
 
 export const EXPENSES: Expense[] = [
   {
-    amount: 1,
-    description: "first",
+    id: "e1",
+    amount: 59.99,
+    description: "A pair of shoes",
+    date: new Date("2023-12-19"),
   },
   {
-    amount: 2,
-    description: "second",
+    id: "e2",
+    amount: 89.29,
+    description: "A pair of trousers",
+    date: new Date("2024-01-05"),
   },
   {
-    amount: 3,
-    description: "third",
+    id: "e3",
+    amount: 5.99,
+    description: "Some bananas",
+    date: new Date("2023-12-01"),
   },
   {
-    amount: 4,
-    description: "fourth",
+    id: "e4",
+    amount: 14.99,
+    description: "A book",
+    date: new Date("2024-02-19"),
   },
   {
-    amount: 5,
-    description: "fifth",
-  },
-  {
-    amount: 6,
-    description: "sixth",
-  },
-  {
-    amount: 7,
-    description: "seventh",
-  },
-  {
-    amount: 8,
-    description: "eighth",
-  },
-  {
-    amount: 9,
-    description: "ninth",
-  },
-  {
-    amount: 10,
-    description: "tenth",
-  },
+    id: "e5",
+    amount: 18.59,
+    description: "Another book",
+    date: new Date("2024-02-18"),
+  }
 ];

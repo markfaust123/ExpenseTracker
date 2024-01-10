@@ -5,7 +5,7 @@ const ExpensesList = ({ expenses }: { expenses: Expense[] }) => {
   return (
     <FlatList
       data={expenses}
-      keyExtractor={(item) => item.toString()}
+      keyExtractor={(item) => item.id.toString()}
       renderItem={(itemData) => <Text>{itemData.item.amount} - {itemData.item.description}</Text>}
     />
   );
