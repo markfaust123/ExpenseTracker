@@ -4,7 +4,11 @@ import IconButton from "../components/ui/IconButton";
 import { GlobalStyles } from "../lib/constants";
 import Button from "../components/ui/Button";
 import { useAppDispatch, useAppSelector } from "../hooks/use-redux";
-import { addExpense, removeExpense } from "../store/redux/expenses";
+import {
+  addExpense,
+  removeExpense,
+  updateExpense,
+} from "../store/redux/expenses";
 import { Expense } from "../lib/types";
 
 const ManageExpenses = ({
@@ -33,7 +37,16 @@ const ManageExpenses = ({
   };
 
   const handleConfirm = (expense: Expense) => {
-    dispatch(addExpense({ expense: expense }));
+    if (isEditing) {
+      dispatch(
+        updateExpense({
+          updateId: editedExpenseId,
+          data: { ...expense, description: "UPDATED EXPENSE" },
+        })
+      );
+    } else {
+      dispatch(addExpense({ expense: expense }));
+    }
     closeModal();
   };
 
@@ -53,7 +66,7 @@ const ManageExpenses = ({
           onPress={handleConfirm.bind(this, {
             id: Math.random().toString(),
             amount: 17.38,
-            date: (new Date()).toISOString().substring(0,10),
+            date: new Date().toISOString().substring(0, 10),
             description: "the beach",
           })}
           style={styles.button}

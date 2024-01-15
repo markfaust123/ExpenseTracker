@@ -8,19 +8,20 @@ const expensesSlice = createSlice({
   },
   reducers: {
     addExpense: (state, action) => {
-      state.expenses.push(action.payload.expense);
+      state.expenses = [action.payload.expense, ...state.expenses];
     },
     removeExpense: (state, action) => {
-        const expenses = state.expenses;
-      const index = expenses.findIndex(
-        (expense) => expense.id === action.payload.removeId
+      state.expenses = state.expenses.filter(
+        (expense) => expense.id !== action.payload.removeId
       );
-      expenses.splice(index, 1);
     },
     updateExpense: (state, action) => {
-      const expenses = state.expenses;
-      const updateExpense = expenses.find((expense) => expense.id === action.payload.updateId);
-      updateExpense!.description = action.payload.updateDescription;
+      const updateableExpenseIndex = state.expenses.findIndex(
+        (expense) => expense.id === action.payload.updateId
+      );
+      const updateableExpense = state.expenses[updateableExpenseIndex];
+      const updatedItem = { ...updateableExpense, ...action.payload.data };
+      state.expenses[updateableExpenseIndex] = updatedItem;
     },
   },
 });
