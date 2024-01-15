@@ -1,13 +1,15 @@
 import { Text } from "react-native";
 import ExpensesOutput from "../components/expenses-output/ExpensesOutput";
-import { EXPENSES } from "../lib/data";
+import { useAppSelector } from "../hooks/use-redux";
 
 const RecentExpenses = () => {
-    return (
-      <>
-        <ExpensesOutput expenses={EXPENSES} expensesPeriod="7 Days" />
-      </>
-    );
-}
+  const expenses = useAppSelector((state) => state.expensesState.expenses);
+
+  return (
+    <>
+      <ExpensesOutput expenses={expenses} expensesPeriod="7 Days" />
+    </>
+  );
+};
 
 export default RecentExpenses;

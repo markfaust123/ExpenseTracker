@@ -8,32 +8,35 @@ const ExpenseItem = ({
   id,
   description,
   amount,
-  date
+  date,
 }: {
   id: string;
   description: string;
   amount: number;
-  date: Date;
-  
+  date: string;
 }) => {
+  const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
-    const navigation = useNavigation<NativeStackNavigationProp<any>>();
-
-    const handleExpensePress = () => {
-        navigation.navigate("ManageExpenses", {
-          expenseId: id,
-        });
-    }
+  const handleExpensePress = () => {
+    navigation.navigate("ManageExpenses", {
+      expenseId: id,
+    });
+  };
 
   return (
-    <Pressable onPress={handleExpensePress} style={({pressed}) => pressed && styles.pressed}>
+    <Pressable
+      onPress={handleExpensePress}
+      style={({ pressed }) => pressed && styles.pressed}
+    >
       <View style={styles.expenseItem}>
         <View>
-          <Text style={[styles.textBase, styles.description]}>{description}</Text>
-          <Text style={styles.textBase}>{getFormattedDate(date)}</Text>
+          <Text style={[styles.textBase, styles.description]}>
+            {description}
+          </Text>
+          <Text style={styles.textBase}>{date}</Text>
         </View>
         <View style={styles.amountContainer}>
-          <Text style={styles.amount}>{amount.toFixed(2)}</Text>
+          <Text style={styles.amount}>${amount.toFixed(2)}</Text>
         </View>
       </View>
     </Pressable>
@@ -41,9 +44,9 @@ const ExpenseItem = ({
 };
 
 const styles = StyleSheet.create({
-    pressed: {
-        opacity: 0.75,
-    },
+  pressed: {
+    opacity: 0.75,
+  },
   expenseItem: {
     padding: 12,
     marginVertical: 8,

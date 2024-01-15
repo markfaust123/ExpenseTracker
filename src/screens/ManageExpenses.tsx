@@ -3,6 +3,9 @@ import { StyleSheet, Text, View } from "react-native";
 import IconButton from "../components/ui/IconButton";
 import { GlobalStyles } from "../lib/constants";
 import Button from "../components/ui/Button";
+import { useAppDispatch, useAppSelector } from "../hooks/use-redux";
+import { addExpense, removeExpense } from "../store/redux/expenses";
+import { Expense } from "../lib/types";
 
 const ManageExpenses = ({
   navigation,
@@ -14,11 +17,14 @@ const ManageExpenses = ({
   const editedExpenseId = route.params?.expenseId;
   const isEditing = !!editedExpenseId;
 
+  const dispatch = useAppDispatch();
+
   const closeModal = () => {
     navigation.goBack();
-  }
+  };
 
   const handleDeleteExpense = () => {
+    dispatch(removeExpense({ removeId: editedExpenseId }));
     closeModal();
   };
 
@@ -26,7 +32,8 @@ const ManageExpenses = ({
     closeModal();
   };
 
-  const handleConfirm = () => {
+  const handleConfirm = (expense: Expense) => {
+    dispatch(addExpense({ expense: expense }));
     closeModal();
   };
 
@@ -42,7 +49,15 @@ const ManageExpenses = ({
         <Button mode="flat" onPress={handleCancel} style={styles.button}>
           Cancel
         </Button>
-        <Button onPress={handleConfirm} style={styles.button}>
+        <Button
+          onPress={handleConfirm.bind(this, {
+            id: Math.random().toString(),
+            amount: 17.38,
+            date: (new Date()).toISOString().substring(0,10),
+            description: "the beach",
+          })}
+          style={styles.button}
+        >
           {isEditing ? "Update" : "Add"}
         </Button>
       </View>
@@ -81,7 +96,7 @@ const styles = StyleSheet.create({
   button: {
     minWidth: 120,
     marginHorizontal: 8,
-  }
+  },
 });
 
 export default ManageExpenses;
