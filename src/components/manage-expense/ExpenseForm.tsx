@@ -2,33 +2,38 @@ import { StyleSheet, Text, TextInput, View } from "react-native";
 import Input from "./Input";
 import { useState } from "react";
 
+type InputValues = {
+  amount: string;
+  date: string;
+  description: string;
+};
+
 const ExpenseForm = () => {
-  const [amount, setAmount] = useState<string>();
-  const [date, setDate] = useState<string>();
-  const [description, setDescription] = useState<string>();
+  const [inputValues, setInputValues] = useState<InputValues>({
+    amount: "",
+    date: "",
+    description: "",
+  });
 
-  const handleAmountChanged = (newAmount: string) => {
-    setAmount(newAmount);
-  };
-
-  const handleDateChanged = (newDate: string) => {
-    setDate(newDate);
-  };
-
-  const handleDescriptionChanged = (newDescription: string) => {
-    setDescription(newDescription);
+  const handleInputChanged = (
+    inputIdentifier: string,
+    enteredValue: string
+  ) => {
+    setInputValues((currentState) => {
+      return { ...currentState, [inputIdentifier]: enteredValue };
+    });
   };
 
   return (
     <View style={styles.form}>
-        <Text style={styles.title}>Your Expense</Text>
+      <Text style={styles.title}>Your Expense</Text>
       <View style={styles.inputsRow}>
         <Input
           label="Amount"
           textInputConfig={{
             keyboardType: "decimal-pad",
-            onChangeText: handleAmountChanged,
-            value: amount,
+            onChangeText: handleInputChanged.bind(this, "amount"),
+            value: inputValues.amount,
           }}
           style={styles.rowInput}
         />
@@ -37,8 +42,8 @@ const ExpenseForm = () => {
           textInputConfig={{
             placeholder: "YYYY-MM-DD",
             maxLength: 10,
-            onChangeText: handleDateChanged,
-            value: date,
+            onChangeText: handleInputChanged.bind(this, "date"),
+            value: inputValues.date,
           }}
           style={styles.rowInput}
         />
@@ -48,8 +53,8 @@ const ExpenseForm = () => {
         textInputConfig={{
           multiline: true,
           autoCorrect: true, // default is true
-          onChangeText: handleDescriptionChanged,
-          value: description,
+          onChangeText: handleInputChanged.bind(this, "description"),
+          value: inputValues.description,
         }}
       />
     </View>
@@ -57,23 +62,23 @@ const ExpenseForm = () => {
 };
 
 const styles = StyleSheet.create({
-    form: {
-        marginTop: 40,
-    },
-    title: {
-        fontSize: 24,
-        fontWeight: "bold",
-        color: "white",
-        marginVertical: 24,
-        textAlign: "center",
-    },
-    inputsRow: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-    },
-    rowInput: {
-        flex: 1,
-    }
-})
+  form: {
+    marginTop: 40,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "white",
+    marginVertical: 24,
+    textAlign: "center",
+  },
+  inputsRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  rowInput: {
+    flex: 1,
+  },
+});
 
 export default ExpenseForm;

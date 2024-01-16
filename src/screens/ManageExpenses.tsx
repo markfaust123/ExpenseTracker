@@ -9,8 +9,6 @@ import {
   deleteExpense,
   updateExpense,
 } from "../store/redux/expenses";
-import { Expense } from "../lib/types";
-import { getFormattedDate } from "../util/date";
 import ExpenseForm from "../components/manage-expense/ExpenseForm";
 
 const ManageExpenses = ({
