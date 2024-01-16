@@ -6,10 +6,11 @@ import Button from "../components/ui/Button";
 import { useAppDispatch, useAppSelector } from "../hooks/use-redux";
 import {
   addExpense,
-  removeExpense,
+  deleteExpense,
   updateExpense,
 } from "../store/redux/expenses";
 import { Expense } from "../lib/types";
+import { getFormattedDate } from "../util/date";
 
 const ManageExpenses = ({
   navigation,
@@ -21,40 +22,48 @@ const ManageExpenses = ({
   const editedExpenseId = route.params?.expenseId;
   const isEditing = !!editedExpenseId;
 
-  const dispatch = useAppDispatch();
-
-  const closeModal = () => {
-    navigation.goBack();
-  };
-
-  const handleDeleteExpense = () => {
-    dispatch(removeExpense({ removeId: editedExpenseId }));
-    closeModal();
-  };
-
-  const handleCancel = () => {
-    closeModal();
-  };
-
-  const handleConfirm = (expense: Expense) => {
-    if (isEditing) {
-      dispatch(
-        updateExpense({
-          updateId: editedExpenseId,
-          data: { ...expense, description: "UPDATED EXPENSE" },
-        })
-      );
-    } else {
-      dispatch(addExpense({ expense: expense }));
-    }
-    closeModal();
-  };
-
   useLayoutEffect(() => {
     navigation.setOptions({
       title: isEditing ? "Edit Expense" : "Add Expense",
     });
   }, [navigation, isEditing]);
+
+  const dispatch = useAppDispatch();
+
+  const handleDeleteExpense = () => {
+    dispatch(deleteExpense({ removeId: editedExpenseId }));
+    navigation.goBack();
+  };
+
+  const handleCancel = () => {
+    navigation.goBack();
+  };
+
+  const handleConfirm = () => {
+    if (isEditing) {
+      dispatch(
+        updateExpense({
+          updateId: editedExpenseId,
+          data: {
+            id: editedExpenseId,
+            amount: 19.99,
+            date: new Date("2024-02-14"),
+            description: "UPDATED EXPENSE",
+          },
+        })
+      );
+    } else {
+      dispatch(
+        addExpense({
+          id: Math.random().toString(),
+          amount: 19.99,
+          date: new Date("2024-02-14"),
+          description: "ADDED EXPENSE",
+        })
+      );
+    }
+    navigation.goBack();
+  };
 
   return (
     <View style={styles.container}>
@@ -62,15 +71,7 @@ const ManageExpenses = ({
         <Button mode="flat" onPress={handleCancel} style={styles.button}>
           Cancel
         </Button>
-        <Button
-          onPress={handleConfirm.bind(this, {
-            id: Math.random().toString(),
-            amount: 17.38,
-            date: new Date().toISOString().substring(0, 10),
-            description: "the beach",
-          })}
-          style={styles.button}
-        >
+        <Button onPress={handleConfirm} style={styles.button}>
           {isEditing ? "Update" : "Add"}
         </Button>
       </View>

@@ -5,7 +5,9 @@ export const store = configureStore({
   reducer: {
     expensesState: expensesReducer,
   },
-  middleware: (getDefaultMiddleware) => getDefaultMiddleware(),
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware({
+    serializableCheck: false
+  }),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

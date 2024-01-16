@@ -3,18 +3,9 @@ import { GlobalStyles } from "../../lib/constants";
 import { getFormattedDate } from "../../util/date";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { Expense } from "../../lib/types";
 
-const ExpenseItem = ({
-  id,
-  description,
-  amount,
-  date,
-}: {
-  id: string;
-  description: string;
-  amount: number;
-  date: string;
-}) => {
+const ExpenseItem = ({ id, description, amount, date }: Expense) => {
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
   const handleExpensePress = () => {
@@ -33,7 +24,7 @@ const ExpenseItem = ({
           <Text style={[styles.textBase, styles.description]}>
             {description}
           </Text>
-          <Text style={styles.textBase}>{date}</Text>
+          <Text style={styles.textBase}>{getFormattedDate(date)}</Text>
         </View>
         <View style={styles.amountContainer}>
           <Text style={styles.amount}>${amount.toFixed(2)}</Text>
