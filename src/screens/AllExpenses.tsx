@@ -7,7 +7,7 @@ const AllExpenses = () => {
 
   return (
     <>
-      <ExpensesOutput expenses={expenses} expensesPeriod="Total" />
+      <ExpensesOutput expenses={expenses} expensesPeriod="Total" fallbackText="No registered expenses found!"/>
     </>
   );
 };

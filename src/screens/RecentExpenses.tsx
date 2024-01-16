@@ -7,12 +7,12 @@ const RecentExpenses = () => {
   const recentExpenses = expenses.filter((expenses) => {
     const today = new Date();
     const dateSevenDaysAgo = getDateMinusDays(today, 7);
-    return (expenses.date >= dateSevenDaysAgo) && (expenses.date <= today);
+    return (expenses.date >= dateSevenDaysAgo);
   });
 
   return (
     <>
-      <ExpensesOutput expenses={recentExpenses} expensesPeriod="Last 7 Days" />
+      <ExpensesOutput expenses={recentExpenses} expensesPeriod="Last 7 Days" fallbackText="No expenses registered for the last 7 days."/>
     </>
   );
 };
