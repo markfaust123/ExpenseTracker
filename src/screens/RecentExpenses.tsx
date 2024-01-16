@@ -1,13 +1,14 @@
 import ExpensesOutput from "../components/expenses-output/ExpensesOutput";
 import { useAppSelector } from "../hooks/use-redux";
-import { getDateMinusDays } from "../util/date";
+import { getDateMinusDays, getFormattedDate } from "../util/date";
 
 const RecentExpenses = () => {
   const expenses = useAppSelector((state) => state.expensesState.expenses);
   const recentExpenses = expenses.filter((expenses) => {
     const today = new Date();
     const dateSevenDaysAgo = getDateMinusDays(today, 7);
-    return (expenses.date >= dateSevenDaysAgo);
+    const date = new Date(expenses.date);
+    return (date > dateSevenDaysAgo);
   });
 
   return (

@@ -6,7 +6,7 @@ export const store = configureStore({
     expensesState: expensesReducer,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware({
-    serializableCheck: false
+    serializableCheck: true
   }),
 });
 

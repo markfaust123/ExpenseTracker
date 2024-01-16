@@ -13,11 +13,12 @@ const ExpensesOutput = ({
   expensesPeriod: string;
   fallbackText: string;
 }) => {
-  let content = <Text style={styles.infoText}>{fallbackText}</Text>;
-
-  if (expenses.length > 0) {
-    content = <ExpensesList expenses={expenses} />;
-  }
+  const content =
+    expenses.length > 0 ? (
+      <ExpensesList expenses={expenses} />
+    ) : (
+      <Text style={styles.infoText}>{fallbackText}</Text>
+    );
 
   return (
     <View style={styles.container}>
