@@ -1,9 +1,9 @@
 import { useLayoutEffect } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import IconButton from "../components/ui/IconButton";
 import { GlobalStyles } from "../lib/constants";
 import Button from "../components/ui/Button";
-import { useAppDispatch, useAppSelector } from "../hooks/use-redux";
+import { useAppDispatch } from "../hooks/use-redux";
 import {
   addExpense,
   deleteExpense,
@@ -11,6 +11,7 @@ import {
 } from "../store/redux/expenses";
 import { Expense } from "../lib/types";
 import { getFormattedDate } from "../util/date";
+import ExpenseForm from "../components/manage-expense/ExpenseForm";
 
 const ManageExpenses = ({
   navigation,
@@ -67,6 +68,7 @@ const ManageExpenses = ({
 
   return (
     <View style={styles.container}>
+      <ExpenseForm />
       <View style={styles.buttons}>
         <Button mode="flat" onPress={handleCancel} style={styles.button}>
           Cancel
