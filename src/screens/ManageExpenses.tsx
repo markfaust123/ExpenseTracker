@@ -10,6 +10,7 @@ import {
 } from "../store/redux/expenses";
 import ExpenseForm from "../components/manage-expense/ExpenseForm";
 import { Expense } from "../lib/types";
+import { storeExpense } from "../lib/api";
 
 const ManageExpenses = ({
   navigation,
@@ -46,6 +47,7 @@ const ManageExpenses = ({
         })
       );
     } else {
+      storeExpense(expenseData);
       dispatch(
         addExpense({
           ...expenseData,
