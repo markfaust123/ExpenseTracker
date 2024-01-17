@@ -12,6 +12,7 @@ import ExpenseForm from "../components/manage-expense/ExpenseForm";
 import { Expense } from "../lib/types";
 import { putExpense, removeExpense, storeExpense } from "../lib/api";
 import LoadingOverlay from "../components/ui/LoadingOverlay";
+import ErrorOverlay from "../components/ui/ErrorOverlay";
 
 const ManageExpenses = ({
   navigation,
@@ -23,6 +24,7 @@ const ManageExpenses = ({
   const editedExpense = route.params?.expense;
   const isEditing = !!editedExpense;
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>();
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -33,39 +35,49 @@ const ManageExpenses = ({
   const dispatch = useAppDispatch();
 
   const handleDeleteExpense = async () => {
-    dispatch(deleteExpense({ removeId: editedExpense.id }));
     setIsLoading(true);
-    await removeExpense(editedExpense.id);
+    try {
+      dispatch(deleteExpense({ removeId: editedExpense.id }));
+      await removeExpense(editedExpense.id);
+      navigation.goBack();
+    } catch (error) {
+      setError("Could not delete expense - please try again later!");
+      setIsLoading(false);
+    }
     // Technically don't need to set because component dismounts upon pop
     // setIsLoading(false);
-    navigation.goBack();
   };
 
   const handleSubmit = async (expenseData: Omit<Expense, "id">) => {
     setIsLoading(true);
-    if (isEditing) {
-      dispatch(
-        updateExpense({
-          updateId: editedExpense.id,
-          data: {
+    try {
+      if (isEditing) {
+        dispatch(
+          updateExpense({
+            updateId: editedExpense.id,
+            data: {
+              ...expenseData,
+              id: editedExpense.id,
+            },
+          })
+        );
+        await putExpense(editedExpense.id, expenseData);
+      } else {
+        const newId = await storeExpense(expenseData);
+        dispatch(
+          addExpense({
+            id: newId,
             ...expenseData,
-            id: editedExpense.id,
-          },
-        })
-      );
-      await putExpense(editedExpense.id, expenseData);
-    } else {
-      const newId = await storeExpense(expenseData);
-      dispatch(
-        addExpense({
-          id: newId,
-          ...expenseData,
-        })
-      );
+          })
+        );
+      }
+      navigation.goBack();
+    } catch (error) {
+      setError("Error adding or editing expense - please try again later!");
+      setIsLoading(false);
     }
     // Technically don't need to set because component dismounts upon pop
     // setIsLoading(false);
-    navigation.goBack();
   };
 
   const handleCancel = () => {
@@ -74,6 +86,10 @@ const ManageExpenses = ({
 
   if (isLoading) {
     return <LoadingOverlay />;
+  }
+
+  if (error && !isLoading) {
+    return <ErrorOverlay message={error} />;
   }
 
   return (
