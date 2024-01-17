@@ -35,7 +35,7 @@ const ManageExpenses = ({
     navigation.goBack();
   };
 
-  const handleSubmit = (expenseData: Omit<Expense, "id">) => {
+  const handleSubmit = async (expenseData: Omit<Expense, "id">) => {
     if (isEditing) {
       dispatch(
         updateExpense({
@@ -47,11 +47,11 @@ const ManageExpenses = ({
         })
       );
     } else {
-      storeExpense(expenseData);
+      const newId = await storeExpense(expenseData);
       dispatch(
         addExpense({
+          id: newId,
           ...expenseData,
-          id: Math.random().toString(),
         })
       );
     }

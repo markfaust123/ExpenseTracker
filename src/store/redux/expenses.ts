@@ -25,7 +25,7 @@ const expensesSlice = createSlice({
       state.expenses[updateableExpenseIndex] = updatedItem;
     },
     setExpenses: (state, action) => {
-      state.expenses = action.payload.expenses;
+      state.expenses = action.payload.expenses.reverse();
     }
   },
 });

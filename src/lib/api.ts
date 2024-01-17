@@ -4,8 +4,10 @@ import { Expense } from "./types";
 const API_URL =
   "https://expense-tracker-410ae-default-rtdb.firebaseio.com";
 
-export const storeExpense = (expenseData: Omit<Expense, "id">) => {
-    axios.post(`${API_URL}/expenses.json`, expenseData);
+export const storeExpense = async (expenseData: Omit<Expense, "id">): Promise<string> => {
+  const response = await axios.post(`${API_URL}/expenses.json`, expenseData);
+  const id = response.data.name;
+  return id;
 }
 
 export const fetchExpenses = async (): Promise<Expense[]> => {
