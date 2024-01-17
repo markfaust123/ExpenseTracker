@@ -10,7 +10,7 @@ import {
 } from "../store/redux/expenses";
 import ExpenseForm from "../components/manage-expense/ExpenseForm";
 import { Expense } from "../lib/types";
-import { storeExpense } from "../lib/api";
+import { putExpense, removeExpense, storeExpense } from "../lib/api";
 
 const ManageExpenses = ({
   navigation,
@@ -30,8 +30,9 @@ const ManageExpenses = ({
 
   const dispatch = useAppDispatch();
 
-  const handleDeleteExpense = () => {
+  const handleDeleteExpense = async () => {
     dispatch(deleteExpense({ removeId: editedExpense.id }));
+    await removeExpense(editedExpense.id);
     navigation.goBack();
   };
 
@@ -46,6 +47,7 @@ const ManageExpenses = ({
           },
         })
       );
+      await putExpense(editedExpense.id, expenseData);
     } else {
       const newId = await storeExpense(expenseData);
       dispatch(

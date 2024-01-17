@@ -29,3 +29,11 @@ export const fetchExpenses = async (): Promise<Expense[]> => {
 
     return expenses;
 }
+
+export const putExpense = (id: string, expenseData: Omit<Expense, "id">): Promise<Expense> => {
+  return axios.put(`${API_URL}/expenses/${id}.json`, expenseData);
+}
+
+export const removeExpense = async (id: string): Promise<Expense> => {
+  return axios.delete(`${API_URL}/expenses/${id}.json`);
+};
