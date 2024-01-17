@@ -3,8 +3,13 @@ import { StyleSheet, View } from "react-native";
 import IconButton from "../components/ui/IconButton";
 import { GlobalStyles } from "../lib/constants";
 import { useAppDispatch } from "../hooks/use-redux";
-import { deleteExpense } from "../store/redux/expenses";
+import {
+  addExpense,
+  deleteExpense,
+  updateExpense,
+} from "../store/redux/expenses";
 import ExpenseForm from "../components/manage-expense/ExpenseForm";
+import { Expense } from "../lib/types";
 
 const ManageExpenses = ({
   navigation,
@@ -29,9 +34,40 @@ const ManageExpenses = ({
     navigation.goBack();
   };
 
+  const handleSubmit = (expenseData: Omit<Expense, "id">) => {
+    if (isEditing) {
+      dispatch(
+        updateExpense({
+          updateId: editedExpense.id,
+          data: {
+            ...expenseData,
+            id: editedExpense.id,
+          },
+        })
+      );
+    } else {
+      dispatch(
+        addExpense({
+          ...expenseData,
+          id: Math.random().toString(),
+        })
+      );
+    }
+    navigation.goBack();
+  };
+
+  const handleCancel = () => {
+    navigation.goBack();
+  };
+
   return (
     <View style={styles.container}>
-      <ExpenseForm editedExpense={editedExpense} isEditing={isEditing} />
+      <ExpenseForm
+        defaultValues={editedExpense}
+        onSubmit={handleSubmit}
+        onCancel={handleCancel}
+        submitButtonLabel={isEditing ? "Update" : "Add"}
+      />
       {isEditing && (
         <View style={styles.deleteContainer}>
           <IconButton

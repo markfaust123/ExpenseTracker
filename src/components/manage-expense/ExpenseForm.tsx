@@ -1,4 +1,4 @@
-import { StyleSheet, Text, TextInput, View } from "react-native";
+import { Alert, StyleSheet, Text, TextInput, View } from "react-native";
 import Input from "./Input";
 import { useState } from "react";
 import Button from "../ui/Button";
@@ -6,75 +6,88 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import { useAppDispatch } from "../../hooks/use-redux";
 import { addExpense, updateExpense } from "../../store/redux/expenses";
 import { Expense } from "../../lib/types";
+import { GlobalStyles } from "../../lib/constants";
+
+type StateVariable = {
+  value: string;
+  isValid: boolean;
+};
 
 type InputValues = {
-  amount: string;
-  date: string;
-  description: string;
+  amount: StateVariable;
+  date: StateVariable;
+  description: StateVariable;
 };
 
 const ExpenseForm = ({
-  editedExpense,
-  isEditing,
+  defaultValues,
+  submitButtonLabel,
+  onSubmit,
+  onCancel,
 }: {
-  editedExpense: Expense;
-  isEditing: boolean;
+  defaultValues: Omit<Expense, "id">;
+  submitButtonLabel: string;
+  onSubmit: (expenseData: Omit<Expense, "id">) => void;
+  onCancel: () => void
 }) => {
-  const navigation = useNavigation();
-  const dispatch = useAppDispatch();
-
-  const [inputValues, setInputValues] = useState<InputValues>(
-    isEditing
-      ? {
-          amount: editedExpense.amount.toString(),
-          date: editedExpense.date,
-          description: editedExpense.description,
-        }
-      : {
-          amount: "",
-          date: "",
-          description: "",
-        }
-  );
+  const [inputs, setInputs] = useState<InputValues>({
+    amount: {
+      value: defaultValues ? defaultValues.amount.toString() : "",
+      isValid: true,
+    },
+    date: {
+      value: defaultValues ? defaultValues.date : "",
+      isValid: true,
+    },
+    description: {
+      value: defaultValues ? defaultValues.description : "",
+      isValid: true,
+    },
+  });
 
   const handleInputChanged = (
     inputIdentifier: string,
     enteredValue: string
   ) => {
-    setInputValues((currentState) => {
-      return { ...currentState, [inputIdentifier]: enteredValue };
+    setInputs((currentState) => {
+      return {
+        ...currentState,
+        [inputIdentifier]: { value: enteredValue, isValid: true },
+      };
     });
   };
 
-  const handleCancel = () => {
-    navigation.goBack();
+  const handleConfirm = () => {
+    const expenseData: Omit<Expense, "id"> = {
+      amount: +inputs.amount.value,
+      date: inputs.date.value,
+      description: inputs.description.value,
+    };
+
+    const amountIsValid: boolean =
+      !isNaN(expenseData.amount) && expenseData.amount > 0;
+    const dateIsValid: boolean =
+      new Date(expenseData.date).toString() !== "Invalid Date";
+    const descriptionIsValid = expenseData.description.trim().length > 0;
+
+    if (!amountIsValid || !dateIsValid || !descriptionIsValid) {
+      setInputs((currentInputs) => {
+        return {
+          amount: { value: currentInputs.amount.value, isValid: amountIsValid },
+          date: { value: currentInputs.date.value, isValid: dateIsValid },
+          description: {
+            value: currentInputs.description.value,
+            isValid: descriptionIsValid,
+          },
+        };
+      });
+      return;
+    }
+
+    onSubmit(expenseData);
   };
 
-  const handleConfirm = () => {
-    if (isEditing) {
-      dispatch(
-        updateExpense({
-          updateId: editedExpense.id,
-          data: {
-            id: editedExpense.id,
-            amount: parseFloat(inputValues.amount),
-            date: inputValues.date,
-            description: inputValues.description,
-          },
-        })
-      );
-    } else {
-      dispatch(
-        addExpense({
-          id: Math.random().toString(),
-          amount: parseFloat(inputValues.amount),
-          date: inputValues.date,
-          description: inputValues.description,
-        })
-      );
-    }
-    navigation.goBack();
-  };
+  const formIsInvalid = !inputs.amount.isValid || !inputs.date.isValid || !inputs.description.isValid;
 
   return (
     <View style={styles.form}>
@@ -82,39 +95,47 @@ const ExpenseForm = ({
       <View style={styles.inputsRow}>
         <Input
           label="Amount"
+          invalid={!inputs.amount.isValid}
           textInputConfig={{
             keyboardType: "decimal-pad",
             onChangeText: handleInputChanged.bind(this, "amount"),
-            value: inputValues.amount,
+            value: inputs.amount.value,
           }}
           style={styles.rowInput}
         />
         <Input
           label="Date"
+          invalid={!inputs.date.isValid}
           textInputConfig={{
             placeholder: "YYYY-MM-DD",
             maxLength: 10,
             onChangeText: handleInputChanged.bind(this, "date"),
-            value: inputValues.date,
+            value: inputs.date.value,
           }}
           style={styles.rowInput}
         />
       </View>
       <Input
         label="Description"
+        invalid={!inputs.description.isValid}
         textInputConfig={{
           multiline: true,
           autoCorrect: true, // default is true
           onChangeText: handleInputChanged.bind(this, "description"),
-          value: inputValues.description,
+          value: inputs.description.value,
         }}
       />
+      {formIsInvalid && (
+        <Text style={styles.errorText}>
+          Invalid input values - please check your entered data!
+        </Text>
+      )}
       <View style={styles.buttons}>
-        <Button mode="flat" onPress={handleCancel} style={styles.button}>
+        <Button mode="flat" onPress={onCancel} style={styles.button}>
           Cancel
         </Button>
         <Button onPress={handleConfirm} style={styles.button}>
-          {isEditing ? "Update" : "Add"}
+          {submitButtonLabel}
         </Button>
       </View>
     </View>
@@ -148,6 +169,11 @@ const styles = StyleSheet.create({
     minWidth: 120,
     marginHorizontal: 8,
   },
+  errorText: {
+    textAlign: "center",
+    color: GlobalStyles.colors.error500,
+    margin: 8,
+  }
 });
 
 export default ExpenseForm;
