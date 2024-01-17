@@ -1,9 +1,10 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import ExpensesOutput from "../components/expenses-output/ExpensesOutput";
 import { useAppDispatch, useAppSelector } from "../hooks/use-redux";
 import { getDateMinusDays } from "../util/date";
 import { fetchExpenses } from "../lib/api";
 import { setExpenses } from "../store/redux/expenses";
+import LoadingOverlay from "../components/ui/LoadingOverlay";
 
 const RecentExpenses = () => {
   const expenses = useAppSelector((state) => state.expensesState.expenses);
@@ -15,9 +16,13 @@ const RecentExpenses = () => {
     return date > dateSevenDaysAgo;
   });
 
+  const [isFetching, setIsFetching] = useState<boolean>(true);
+
   useEffect(() => {
     const getExpenses = async () => {
+      setIsFetching(true);
       const expenses = await fetchExpenses();
+      setIsFetching(false);
       dispatch(setExpenses({ expenses: expenses }));
     };
     getExpenses();
@@ -25,11 +30,13 @@ const RecentExpenses = () => {
 
   return (
     <>
-      <ExpensesOutput
-        expenses={recentExpenses}
-        expensesPeriod="Last 7 Days"
-        fallbackText="No expenses registered for the last 7 days."
-      />
+      {isFetching ? <LoadingOverlay /> : (
+        <ExpensesOutput
+          expenses={recentExpenses}
+          expensesPeriod="Last 7 Days"
+          fallbackText="No expenses registered for the last 7 days."
+        />
+      )}
     </>
   );
 };

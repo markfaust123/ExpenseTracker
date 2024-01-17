@@ -1,4 +1,4 @@
-import { useLayoutEffect } from "react";
+import { useLayoutEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import IconButton from "../components/ui/IconButton";
 import { GlobalStyles } from "../lib/constants";
@@ -11,6 +11,7 @@ import {
 import ExpenseForm from "../components/manage-expense/ExpenseForm";
 import { Expense } from "../lib/types";
 import { putExpense, removeExpense, storeExpense } from "../lib/api";
+import LoadingOverlay from "../components/ui/LoadingOverlay";
 
 const ManageExpenses = ({
   navigation,
@@ -21,6 +22,7 @@ const ManageExpenses = ({
 }) => {
   const editedExpense = route.params?.expense;
   const isEditing = !!editedExpense;
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -32,11 +34,15 @@ const ManageExpenses = ({
 
   const handleDeleteExpense = async () => {
     dispatch(deleteExpense({ removeId: editedExpense.id }));
+    setIsLoading(true);
     await removeExpense(editedExpense.id);
+    // Technically don't need to set because component dismounts upon pop
+    // setIsLoading(false);
     navigation.goBack();
   };
 
   const handleSubmit = async (expenseData: Omit<Expense, "id">) => {
+    setIsLoading(true);
     if (isEditing) {
       dispatch(
         updateExpense({
@@ -57,12 +63,18 @@ const ManageExpenses = ({
         })
       );
     }
+    // Technically don't need to set because component dismounts upon pop
+    // setIsLoading(false);
     navigation.goBack();
   };
 
   const handleCancel = () => {
     navigation.goBack();
   };
+
+  if (isLoading) {
+    return <LoadingOverlay />;
+  }
 
   return (
     <View style={styles.container}>
